@@ -8,6 +8,17 @@ CREATE TYPE return_feature_type AS (
   , updated_at TIMESTAMPTZ
 );
 
+CREATE OR REPLACE FUNCTION list_features ( )
+RETURNS SETOF return_feature_type
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT id, name, description, tags, created_at, updated_at
+  FROM environments;
+END;
+$$
+LANGUAGE plpgsql;
+
 -- This function returns a bit of information about each feature in the database,
 -- using a string to filter features based on full text search.
 CREATE OR REPLACE FUNCTION feature_search(
@@ -31,7 +42,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION create_or_replace_feature (
+CREATE OR REPLACE FUNCTION create_feature (
     _name        TEXT      -- name        (1)
   , _description TEXT      -- description (2)
   , _tags        TEXT[]    -- tags        (3)
